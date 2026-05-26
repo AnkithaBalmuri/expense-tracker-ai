@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f5f7ef;
+  --foreground: #17210f;
+  --olive: #556b2f;
+  --olive-dark: #34451e;
+  --olive-soft: #edf3e3;
+  --line: #c7d2b6;
+  --muted: #647052;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background:
+    linear-gradient(180deg, rgba(237, 243, 227, 0.92), rgba(245, 247, 239, 0.7) 260px),
+    var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.field {
+  width: 100%;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 0.65rem 0.75rem;
+  color: var(--foreground);
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.field:focus {
+  border-color: var(--olive);
+  box-shadow: 0 0 0 3px rgba(85, 107, 47, 0.16);
+}
+
+.btn {
+  border-radius: 999px;
+  border: 1.5px solid var(--olive);
+  padding: 0.62rem 0.95rem;
+  font-weight: 800;
+  transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: var(--olive);
+  color: #ffffff;
+}
+
+.btn-outline {
+  background: #ffffff;
+  color: var(--olive-dark);
+}
+
+.card {
+  border: 1.5px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 10px 26px rgba(52, 69, 30, 0.06);
+}
+
+.panel-title {
+  color: var(--foreground);
+  font-size: 0.95rem;
+  font-weight: 900;
+}
+
+.label {
+  color: var(--olive-dark);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--olive-soft);
+  color: var(--olive-dark);
+  padding: 0.25rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
