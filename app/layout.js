@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Olive Expense Tracker",
+  title: "Expense Tracker",
   description: "Full-stack bill scanner and expense analytics app."
 };
 

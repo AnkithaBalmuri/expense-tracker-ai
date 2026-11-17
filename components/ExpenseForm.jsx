@@ -8,7 +8,7 @@ export default function ExpenseForm({ form, setForm, onSubmit, saving, editingId
   }
 
   return (
-    <section className="card p-4">
+    <section className="card form-card p-4">
       <div className="mb-4 flex items-center justify-between gap-3">
         <h2 className="panel-title">{editingId ? "Edit expense" : "Add expense"}</h2>
         {editingId ? (

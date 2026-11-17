@@ -6,6 +6,7 @@ import ExpenseForm from "@/components/ExpenseForm";
 import ExpenseList from "@/components/ExpenseList";
 import Filters from "@/components/Filters";
 import BillScanner from "@/components/BillScanner";
+import AuthScreen from "@/components/AuthScreen";
 import { formatCurrency, formatDate, toMonthKey } from "@/lib/helpers";
 
 const emptyExpense = {
@@ -30,6 +31,8 @@ export default function ExpenseApp() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
+  const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
 
   useEffect(() => {
     const savedBudget = Number(localStorage.getItem("monthlyBudget") || 0);
@@ -37,8 +40,23 @@ export default function ExpenseApp() {
   }, []);
 
   useEffect(() => {
-    loadExpenses();
-  }, [filters]);
+    async function checkSession() {
+      try {
+        const response = await fetch("/api/auth/me");
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+        }
+      } finally {
+        setAuthLoading(false);
+      }
+    }
+    checkSession();
+  }, []);
+
+  useEffect(() => {
+    if (user) loadExpenses();
+  }, [filters, user]);
 
   async function loadExpenses() {
     setLoading(true);
@@ -128,6 +146,13 @@ export default function ExpenseApp() {
     localStorage.setItem("monthlyBudget", String(next));
   }
 
+  async function signOut() {
+    await fetch("/api/auth/logout", { method: "POST" });
+    setUser(null);
+    setExpenses([]);
+    setNotice("");
+  }
+
   const thisMonth = toMonthKey(new Date());
   const thisMonthTotal = useMemo(
     () => expenses.filter((expense) => expense.month === thisMonth).reduce((sum, expense) => sum + expense.amount, 0),
@@ -135,18 +160,33 @@ export default function ExpenseApp() {
   );
   const budgetExceeded = budget > 0 && thisMonthTotal > budget;
 
+  if (authLoading) {
+    return <main className="auth-page flex min-h-screen items-center justify-center"><p className="chip">Opening your Expense Tracker...</p></main>;
+  }
+
+  if (!user) return <AuthScreen onSignedIn={setUser} />;
+
   return (
-    <main className="min-h-screen px-3 py-4 sm:px-5 lg:px-6">
+    <main className="expense-shell min-h-screen px-3 py-4 sm:px-5 lg:px-6">
       <section className="mx-auto flex max-w-[1500px] flex-col gap-4">
-        <header className="card flex flex-col justify-between gap-4 p-4 md:flex-row md:items-center">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-2xl font-black text-[#17210f] sm:text-3xl">Olive Ledger</h1>
-              <span className="chip">OCR + MongoDB</span>
-            </div>
-            <p className="mt-1 text-sm font-bold text-[#647052]">Track, scan, filter, and review expenses from one workspace.</p>
+        <header className="card hero-header flex flex-col justify-between gap-4 p-4 md:flex-row md:items-center">
+          <div className="hero-doodles" aria-hidden="true">
+            <span className="doodle doodle-rupee">₹</span>
+            <span className="doodle doodle-dollar">$</span>
+            <span className="doodle doodle-coin">+</span>
+            <span className="doodle doodle-dots">•••</span>
           </div>
-          <div className="flex flex-col gap-2 sm:min-w-[360px]">
+          <div className="relative z-10">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="text-2xl font-black text-[#17210f] sm:text-3xl">Expense Tracker</h1>
+            </div>
+            <p className="mt-1 text-sm font-bold text-[#647052]">Keep every expense, bill, and budget in one clear view.</p>
+          </div>
+          <div className="relative z-10 flex flex-col gap-2 sm:min-w-[360px]">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm font-black text-[#405238]">Hi, {user.name}</p>
+              <button className="btn btn-outline px-3 py-1.5 text-xs" type="button" onClick={signOut}>Sign out</button>
+            </div>
             <label className="label" htmlFor="budget">
               Monthly budget
             </label>

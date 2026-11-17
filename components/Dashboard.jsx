@@ -124,7 +124,7 @@ export default function Dashboard({ expenses, budget }) {
 
 function Metric({ title, value }) {
   return (
-    <div className="card px-4 py-3">
+    <div className="card metric-card px-4 py-3">
       <p className="text-[0.72rem] font-black uppercase tracking-[0.12em] text-[#556b2f]">{title}</p>
       <p className="mt-1 break-words text-xl font-black text-[#17210f]">{value}</p>
     </div>
@@ -133,7 +133,7 @@ function Metric({ title, value }) {
 
 function ChartCard({ title, children }) {
   return (
-    <div className="card p-4">
+    <div className="card chart-card p-4">
       <h2 className="panel-title">{title}</h2>
       <div className="mt-3 h-56">{children}</div>
     </div>

@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { toMonthKey } from "@/lib/helpers";
+import { requireUser } from "@/lib/auth";
 import Expense from "@/models/Expense";
 
 export async function PUT(request, { params }) {
   try {
     await connectToDatabase();
+    const user = await requireUser();
     const { id } = await params;
     const body = await request.json();
     const amount = Number(body.amount);
@@ -16,7 +18,7 @@ export async function PUT(request, { params }) {
     }
 
     const expense = await Expense.findByIdAndUpdate(
-      id,
+      { _id: id, userId: user.id },
       {
         title: body.title || "",
         amount,
@@ -33,6 +35,7 @@ export async function PUT(request, { params }) {
 
     return NextResponse.json({ expense });
   } catch (error) {
+    if (error.message === "AUTH_REQUIRED") return NextResponse.json({ message: "Please sign in to update expenses." }, { status: 401 });
     return NextResponse.json({ message: error.message || "Failed to update expense" }, { status: 500 });
   }
 }
@@ -40,8 +43,9 @@ export async function PUT(request, { params }) {
 export async function DELETE(_request, { params }) {
   try {
     await connectToDatabase();
+    const user = await requireUser();
     const { id } = await params;
-    const expense = await Expense.findByIdAndDelete(id);
+    const expense = await Expense.findOneAndDelete({ _id: id, userId: user.id });
 
     if (!expense) {
       return NextResponse.json({ message: "Expense not found" }, { status: 404 });
@@ -49,6 +53,7 @@ export async function DELETE(_request, { params }) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
+    if (error.message === "AUTH_REQUIRED") return NextResponse.json({ message: "Please sign in to delete expenses." }, { status: 401 });
     return NextResponse.json({ message: error.message || "Failed to delete expense" }, { status: 500 });
   }
 }

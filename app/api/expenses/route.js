@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { toMonthKey } from "@/lib/helpers";
+import { requireUser } from "@/lib/auth";
 import Expense from "@/models/Expense";
 
 export async function GET(request) {
   try {
     await connectToDatabase();
+    const user = await requireUser();
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
     const month = searchParams.get("month");
@@ -13,7 +15,7 @@ export async function GET(request) {
     const endDate = searchParams.get("endDate");
     const search = searchParams.get("search");
 
-    const query = {};
+    const query = { userId: user.id };
     if (category && category !== "All") query.category = category;
     if (month) query.month = month;
     if (startDate || endDate) {
@@ -30,6 +32,7 @@ export async function GET(request) {
     const expenses = await Expense.find(query).sort({ date: -1, createdAt: -1 }).lean();
     return NextResponse.json({ expenses });
   } catch (error) {
+    if (error.message === "AUTH_REQUIRED") return NextResponse.json({ message: "Please sign in to view expenses." }, { status: 401 });
     return NextResponse.json({ message: error.message || "Failed to load expenses" }, { status: 500 });
   }
 }
@@ -37,6 +40,7 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     await connectToDatabase();
+    const user = await requireUser();
     const body = await request.json();
     const amount = Number(body.amount);
     const date = body.date ? new Date(body.date) : new Date();
@@ -46,6 +50,7 @@ export async function POST(request) {
     }
 
     const expense = await Expense.create({
+      userId: user.id,
       title: body.title || "",
       amount,
       category: body.category || "Other",
@@ -55,6 +60,7 @@ export async function POST(request) {
 
     return NextResponse.json({ expense }, { status: 201 });
   } catch (error) {
+    if (error.message === "AUTH_REQUIRED") return NextResponse.json({ message: "Please sign in to create expenses." }, { status: 401 });
     return NextResponse.json({ message: error.message || "Failed to create expense" }, { status: 500 });
   }
 }

@@ -74,13 +74,13 @@ export default function BillScanner({ onApply }) {
   }
 
   return (
-    <section className="card p-4">
+    <section className="card scanner-card p-4">
       <div className="flex items-center justify-between gap-3">
         <h2 className="panel-title">Bill scanner</h2>
         {scanning ? <span className="chip">{progressLabel}</span> : null}
       </div>
 
-      <label className="mt-3 flex cursor-pointer items-center justify-between gap-3 rounded-lg border-2 border-dashed border-[#9baa7a] bg-white p-4 text-sm font-black text-[#34451e]">
+      <label className="scanner-dropzone mt-3 flex cursor-pointer items-center justify-between gap-3 rounded-lg border-2 border-dashed border-[#9baa7a] p-4 text-sm font-black text-[#34451e]">
         <span className="truncate">{fileName || "Choose JPG or PNG bill image"}</span>
         <span className="rounded-full bg-[#edf3e3] px-3 py-1 text-xs">Browse</span>
         <input className="sr-only" type="file" accept="image/png,image/jpeg" onChange={scanFile} />
