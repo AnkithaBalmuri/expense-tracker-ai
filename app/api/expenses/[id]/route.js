@@ -4,6 +4,9 @@ import { toMonthKey } from "@/lib/helpers";
 import { requireUser } from "@/lib/auth";
 import Expense from "@/models/Expense";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export async function PUT(request, { params }) {
   try {
     await connectToDatabase();

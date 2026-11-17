@@ -3,6 +3,9 @@ import { connectToDatabase } from "@/lib/mongodb";
 import { createSession, SESSION_COOKIE, sessionCookieOptions, verifyPassword } from "@/lib/auth";
 import User from "@/models/User";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export async function POST(request) {
   try {
     const { email, password } = await request.json();

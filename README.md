@@ -1,4 +1,4 @@
-# Olive Expense Tracker
+# Expense Tracker
 
 A single-project full-stack expense tracker built with Next.js App Router, MongoDB, Mongoose, Tesseract.js OCR, Chart.js, React, and Tailwind CSS.
 
@@ -23,11 +23,6 @@ A single-project full-stack expense tracker built with Next.js App Router, Mongo
 
    ```bash
    MONGODB_URI=your_mongodb_connection_string
-   LANGSMITH_TRACING=true
-   LANGSMITH_ENDPOINT=https://api.smith.langchain.com
-   LANGSMITH_API_KEY=your_langsmith_api_key
-   LANGSMITH_PROJECT="expense tracker ai"
-   ANTHROPIC_API_KEY=your_anthropic_api_key
    ```
 
 3. Run the app:
@@ -40,6 +35,6 @@ A single-project full-stack expense tracker built with Next.js App Router, Mongo
 
 ## Vercel Deployment
 
-Deploy this project directly to Vercel and add `MONGODB_URI` in Project Settings > Environment Variables. No Express server or separate backend is required.
+Deploy this project directly to Vercel and add `MONGODB_URI` in Project Settings > Environment Variables for Production, Preview, and Development. No Express server or separate backend is required.
 
-If you add server-side AI routes later, also add the LangSmith and Anthropic variables in Vercel Project Settings. Do not prefix these variables with `NEXT_PUBLIC_`, because they must stay server-side.
+After deployment, open `/api/health`. It should return `{ "status": "ok", "database": "expense-tracker" }`. If it returns `503`, make sure your Atlas Network Access list permits the Vercel deployment and that `MONGODB_URI` is set in Vercel.
